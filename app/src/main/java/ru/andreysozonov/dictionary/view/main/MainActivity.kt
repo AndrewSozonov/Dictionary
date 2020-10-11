@@ -2,23 +2,35 @@ package ru.andreysozonov.dictionary.view.main
 
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import ru.andreysozonov.dictionary.view.main.SearchDialogFragment
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.andreysozonov.dictionary.R
 import ru.andreysozonov.dictionary.model.data.AppState
 import ru.andreysozonov.dictionary.model.data.SearchResult
-import ru.andreysozonov.dictionary.presenter.Presenter
 import ru.andreysozonov.dictionary.view.base.BaseActivity
 import ru.andreysozonov.dictionary.view.base.View
 import ru.andreysozonov.dictionary.view.main.adapter.MainAdapter
+import ru.andreysozonov.dictionary.view.viewmodel.BaseViewModel
+import javax.inject.Inject
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
+
+
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+
+
+    override lateinit var  model: MainViewModel
+
+    private val observer = Observer<AppState>{
+        renderData(it)
+    }
 
     private var adapter: MainAdapter? = null
 
@@ -30,23 +42,23 @@ class MainActivity : BaseActivity<AppState>() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        model = viewModelFactory.create(MainViewModel::class.java)
 
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object : SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+
+                    model.getData(searchWord, true).observe(this@MainActivity, observer)
                 }
-                
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-    }
-
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
     }
 
     override fun renderData(appstate: AppState) {
@@ -86,7 +98,7 @@ class MainActivity : BaseActivity<AppState>() {
     private fun showErrorScreen(error: String?) {
         showViewError()
         error_textview.text = error?: getString(R.string.undefined_error)
-        reload_button.setOnClickListener { presenter.getData("hi", true) }
+        reload_button.setOnClickListener { model.getData("hi", true).observe(this, observer) }
 
     }
 
@@ -114,5 +126,7 @@ class MainActivity : BaseActivity<AppState>() {
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
+
+
 
 }

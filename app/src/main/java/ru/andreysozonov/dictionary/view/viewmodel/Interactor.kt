@@ -1,4 +1,4 @@
-package ru.andreysozonov.dictionary.presenter
+package ru.andreysozonov.dictionary.view.viewmodel
 import io.reactivex.Observable
 
 interface Interactor<T> {
