@@ -5,7 +5,7 @@ import ru.andreysozonov.dictionary.model.data.SearchResult
 
 class DataSourceLocal(private val remoteProvider: RoomDataBaseImplementation = RoomDataBaseImplementation()) :
     DataSource<List<SearchResult>> {
-    override fun getData(word: String): Observable<List<SearchResult>> =
+    override suspend fun getData(word: String): List<SearchResult> =
         remoteProvider.getData(word)
 
 }

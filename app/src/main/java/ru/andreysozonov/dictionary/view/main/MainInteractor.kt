@@ -10,17 +10,17 @@ import ru.andreysozonov.dictionary.view.viewmodel.Interactor
 import javax.inject.Inject
 import javax.inject.Named
 
-class MainInteractor @Inject constructor(
+class MainInteractor (
     @Named(NAME_REMOTE) val remoteRepository: Repository<List<SearchResult>>,
     @Named(NAME_LOCAL) val localRepository: Repository<List<SearchResult>>
 ) : Interactor<AppState> {
-    override fun getData(word: String, isOnline: Boolean): Observable<AppState> {
-        return if (isOnline) {
-            remoteRepository.getData(word).map { AppState.Success(it) }
-        } else {
-            localRepository.getData(word).map { AppState.Success(it) }
-        }
+    override suspend fun getData(word: String, isOnline: Boolean): AppState {
+        return AppState.Success(
+            if (isOnline) {
+                remoteRepository
+            } else {
+                localRepository
+            }.getData(word)
+        )
     }
-
-
 }
