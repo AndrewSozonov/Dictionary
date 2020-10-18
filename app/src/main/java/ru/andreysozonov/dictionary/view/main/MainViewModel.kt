@@ -23,32 +23,7 @@ class MainViewModel (private val interactor: MainInteractor) :
             startInteractor(word, isOnline)
         }
         return liveDataForViewToObserve
-
-        /*compositeDisposable.add(
-            interactor.getData(word, isOnline)
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
-                .doOnSubscribe { liveDataForViewToObserve.value = AppState.Loading(null) }
-                .subscribeWith(getObserver())
-        )
-        return super.getData(word, isOnline)*/
     }
-
-    /*private fun getObserver(): DisposableObserver<AppState> {
-        return object : DisposableObserver<AppState>() {
-            override fun onComplete() {
-            }
-
-            override fun onNext(t: AppState) {
-                appState = t
-                liveDataForViewToObserve.value = t
-            }
-
-            override fun onError(e: Throwable) {
-                liveDataForViewToObserve.value = AppState.Error(e)
-            }
-        }
-    }*/
 
     private suspend fun startInteractor(word: String, isOnline: Boolean) = withContext(Dispatchers.IO) {
         liveDataForViewToObserve.postValue(interactor.getData(word, isOnline))

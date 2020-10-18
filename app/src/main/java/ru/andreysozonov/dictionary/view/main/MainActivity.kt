@@ -1,25 +1,31 @@
 package ru.andreysozonov.dictionary.view.main
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.andreysozonov.dictionary.R
 import ru.andreysozonov.dictionary.model.data.AppState
 import ru.andreysozonov.dictionary.model.data.SearchResult
+import ru.andreysozonov.dictionary.utils.convertMeaningsToString
 import ru.andreysozonov.dictionary.view.base.BaseActivity
+import ru.andreysozonov.dictionary.view.description.DescriptionActivity
+import ru.andreysozonov.dictionary.view.history.HistoryActivity
 import ru.andreysozonov.dictionary.view.main.adapter.MainAdapter
-import javax.inject.Inject
 
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
-     override lateinit var model: MainViewModel
+    override lateinit var model: MainViewModel
 
     private val observer = Observer<AppState> {
         renderData(it)
@@ -31,6 +37,14 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: SearchResult) {
                 Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+                startActivity(
+                    DescriptionActivity.getIntent(
+                        this@MainActivity,
+                        data.text!!,
+                        convertMeaningsToString(data.meanings!!),
+                        data.meanings[0].imageUrl
+                    )
+                )
             }
         }
 
@@ -38,6 +52,9 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val toolbar = toolbar_main
+        setSupportActionBar(toolbar)
 
         val viewModel: MainViewModel by viewModel()
         model = viewModel
@@ -88,6 +105,22 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                 }
             }
 
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_history, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.button_menu_history -> {
+                Log.d("TAG", "history clicked")
+                startActivity(Intent(this, HistoryActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
