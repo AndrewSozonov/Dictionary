@@ -31,6 +31,7 @@ class HistoryActivity : ru.andreysozonov.core.viewmodel.BaseActivity<AppState, H
         if (history_activity_recyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
+        injectDependencies()
         val viewModel: HistoryViewModel by viewModel()
         model = viewModel
         model.subscribe().observe(this@HistoryActivity, Observer<AppState> {
