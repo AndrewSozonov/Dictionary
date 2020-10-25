@@ -4,30 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.andreysozonov.dictionary.R
-import ru.andreysozonov.dictionary.model.data.AppState
-import ru.andreysozonov.dictionary.model.data.SearchResult
-import ru.andreysozonov.dictionary.utils.convertMeaningsToString
-import ru.andreysozonov.dictionary.view.base.BaseActivity
+import ru.andreysozonov.utils.utils.convertMeaningsToString
 import ru.andreysozonov.dictionary.view.description.DescriptionActivity
-import ru.andreysozonov.dictionary.view.history.HistoryActivity
+import ru.andreysozonov.historyscreen.view.history.HistoryActivity
 import ru.andreysozonov.dictionary.view.main.adapter.MainAdapter
 
-class MainActivity : BaseActivity<AppState, MainInteractor>() {
+class MainActivity : ru.andreysozonov.core.viewmodel.BaseActivity<ru.andreysozonov.model.data.data.AppState, MainInteractor>() {
 
     override lateinit var model: MainViewModel
 
-    private val observer = Observer<AppState> {
+    private val observer = Observer<ru.andreysozonov.model.data.data.AppState> {
         renderData(it)
     }
 
@@ -35,14 +30,14 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
-            override fun onItemClick(data: SearchResult) {
+            override fun onItemClick(data: ru.andreysozonov.model.data.data.SearchResult) {
                 Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
                 startActivity(
                     DescriptionActivity.getIntent(
                         this@MainActivity,
                         data.text!!,
                         convertMeaningsToString(data.meanings!!),
-                        data.meanings[0].imageUrl
+                        data.meanings!![0].imageUrl
                     )
                 )
             }
@@ -72,9 +67,9 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         }
     }
 
-    override fun renderData(appstate: AppState) {
+    override fun renderData(appstate: ru.andreysozonov.model.data.data.AppState) {
         when (appstate) {
-            is AppState.Success -> {
+            is ru.andreysozonov.model.data.data.AppState.Success -> {
                 val dataModel = appstate.data
                 if (dataModel == null || dataModel.isEmpty()) {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
@@ -90,15 +85,15 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                     }
                 }
             }
-            is AppState.Error -> {
+            is ru.andreysozonov.model.data.data.AppState.Error -> {
                 showErrorScreen(appstate.error.message)
             }
-            is AppState.Loading -> {
+            is ru.andreysozonov.model.data.data.AppState.Loading -> {
                 showViewLoading()
                 if (appstate.progress != null) {
                     progress_bar_horizontal.visibility = VISIBLE
                     progress_bar_round.visibility = GONE
-                    progress_bar_horizontal.progress = appstate.progress
+                    progress_bar_horizontal.progress = appstate.progress!!
                 } else {
                     progress_bar_horizontal.visibility = GONE
                     progress_bar_round.visibility = VISIBLE
