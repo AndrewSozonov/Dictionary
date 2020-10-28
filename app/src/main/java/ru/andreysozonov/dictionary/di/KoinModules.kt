@@ -2,6 +2,7 @@ package ru.andreysozonov.dictionary.di
 
 import RepositoryImplementationLocal
 import androidx.room.Room
+import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 import ru.andreysozonov.repository.datasource.RetrofitImplementation
 import ru.andreysozonov.repository.datasource.RoomDataBaseImplementation
@@ -9,10 +10,14 @@ import ru.andreysozonov.dictionary.model.repository.Repository
 import ru.andreysozonov.dictionary.model.repository.RepositoryImplementation
 import ru.andreysozonov.dictionary.model.repository.RepositoryLocal
 import ru.andreysozonov.repository.room.HistoryDataBase
-import ru.andreysozonov.historyscreen.view.history.HistoryInteractor
-import ru.andreysozonov.historyscreen.view.history.HistoryViewModel
 import ru.andreysozonov.dictionary.view.main.MainInteractor
 import ru.andreysozonov.dictionary.view.main.MainViewModel
+
+fun injectDependencies() = loadModules
+
+private val loadModules by lazy {
+    loadKoinModules(listOf(application, mainScreen))
+}
 
 
 val application = module {
@@ -33,7 +38,3 @@ val mainScreen = module {
 
 }
 
-val historyScreen = module {
-    factory { HistoryViewModel(get()) }
-    factory { HistoryInteractor(get(), get()) }
-}

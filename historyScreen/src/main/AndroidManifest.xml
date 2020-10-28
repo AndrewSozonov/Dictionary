@@ -1,5 +1,15 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:dist="http://schemas.android.com/apk/distribution"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.andreysozonov.historyscreen">
 
-    /
+    <dist:module
+        dist:instant="false"
+        dist:onDemand ="true"
+        dist:title="@string/title_historyscreenfeature">
+        <dist:fusing dist:include="true" />
+    </dist:module>
+
+    <application>
+        <activity android:name="ru.andreysozonov.historyscreen.view.history.HistoryActivity"/>
+    </application>
 </manifest>

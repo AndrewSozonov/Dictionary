@@ -23,13 +23,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    dynamicFeatures = [Modules.historyScreen]
 }
 
 dependencies {
     implementation project(Modules.core)
     implementation project(Modules.model)
     implementation project(Modules.repository)
-    implementation project(Modules.historyScreen)
     implementation project(Modules.utils)
     //Design
     implementation Design.appcompat
@@ -64,5 +65,7 @@ dependencies {
     androidTestImplementation TestImpl.extJunit
     androidTestImplementation TestImpl.espresso
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    implementation 'com.google.android.play:core:1.8.2'
 }
 

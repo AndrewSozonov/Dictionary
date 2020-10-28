@@ -2,7 +2,6 @@ package ru.andreysozonov.dictionary.view.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
@@ -10,17 +9,27 @@ import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.play.core.splitinstall.SplitInstallManager
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.andreysozonov.dictionary.R
-import ru.andreysozonov.utils.utils.convertMeaningsToString
+import ru.andreysozonov.dictionary.di.injectDependencies
 import ru.andreysozonov.dictionary.view.description.DescriptionActivity
-import ru.andreysozonov.historyscreen.view.history.HistoryActivity
 import ru.andreysozonov.dictionary.view.main.adapter.MainAdapter
+import ru.andreysozonov.utils.utils.convertMeaningsToString
 
-class MainActivity : ru.andreysozonov.core.viewmodel.BaseActivity<ru.andreysozonov.model.data.data.AppState, MainInteractor>() {
+private const val HISTORY_ACTIVITY_PATH =
+    "ru.andreysozonov.historyscreen.view.history.HistoryActivity"
+private const val HISTORY_ACTIVITY_FEATURE_NAME = "historyScreen"
+
+class MainActivity :
+    ru.andreysozonov.core.viewmodel.BaseActivity<ru.andreysozonov.model.data.data.AppState, MainInteractor>() {
+
 
     override lateinit var model: MainViewModel
+    private lateinit var splitInstallManager: SplitInstallManager
 
     private val observer = Observer<ru.andreysozonov.model.data.data.AppState> {
         renderData(it)
@@ -51,8 +60,9 @@ class MainActivity : ru.andreysozonov.core.viewmodel.BaseActivity<ru.andreysozon
         val toolbar = toolbar_main
         setSupportActionBar(toolbar)
 
-        val viewModel: MainViewModel by viewModel()
-        model = viewModel
+        initViewModel()
+
+
 
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -65,6 +75,12 @@ class MainActivity : ru.andreysozonov.core.viewmodel.BaseActivity<ru.andreysozon
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
+    }
+
+    private fun initViewModel() {
+        injectDependencies()
+        val viewModel: MainViewModel by viewModel()
+        model = viewModel
     }
 
     override fun renderData(appstate: ru.andreysozonov.model.data.data.AppState) {
@@ -111,8 +127,25 @@ class MainActivity : ru.andreysozonov.core.viewmodel.BaseActivity<ru.andreysozon
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.button_menu_history -> {
-                Log.d("TAG", "history clicked")
-                startActivity(Intent(this, HistoryActivity::class.java))
+                splitInstallManager = SplitInstallManagerFactory.create(applicationContext)
+                val request = SplitInstallRequest
+                    .newBuilder()
+                    .addModule(HISTORY_ACTIVITY_FEATURE_NAME)
+                    .build()
+                splitInstallManager
+                    .startInstall(request)
+                    .addOnSuccessListener {
+                        val intent = Intent().setClassName(packageName, HISTORY_ACTIVITY_PATH)
+                        startActivity(intent)
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(
+                            applicationContext,
+                            "Couldn't download feature: " + it.message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
                 true
             }
             else -> super.onOptionsItemSelected(item)

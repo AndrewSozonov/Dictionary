@@ -1,4 +1,4 @@
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.dynamic-feature'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    implementation project(Modules.app)
     implementation project(Modules.core)
     implementation project(Modules.model)
     implementation project(Modules.repository)
