@@ -1,10 +1,8 @@
 package ru.andreysozonov.dictionary.view.main
 
-import ru.andreysozonov.model.data.data.AppState
-import ru.andreysozonov.model.data.data.SearchResult
+import ru.andreysozonov.core.viewmodel.Interactor
 import ru.andreysozonov.dictionary.model.repository.Repository
 import ru.andreysozonov.dictionary.model.repository.RepositoryLocal
-import ru.andreysozonov.core.viewmodel.Interactor
 
 
 class MainInteractor(

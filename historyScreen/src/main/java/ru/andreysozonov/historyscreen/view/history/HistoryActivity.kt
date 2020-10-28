@@ -3,14 +3,15 @@ package ru.andreysozonov.historyscreen.view.history
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_history.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
 import ru.andreysozonov.historyscreen.R
 import ru.andreysozonov.historyscreen.view.history.adapter.HistoryAdapter
 import ru.andreysozonov.model.data.data.AppState
 import ru.andreysozonov.model.data.data.SearchResult
 import ru.andreysozonov.utils.utils.ui.AlertDialogFragment
 
-class HistoryActivity : ru.andreysozonov.core.viewmodel.BaseActivity<AppState, HistoryInteractor>() {
+class HistoryActivity :
+    ru.andreysozonov.core.viewmodel.BaseActivity<AppState, HistoryInteractor>() {
 
 
     override lateinit var model: HistoryViewModel
@@ -32,7 +33,7 @@ class HistoryActivity : ru.andreysozonov.core.viewmodel.BaseActivity<AppState, H
             throw IllegalStateException("The ViewModel should be initialised first")
         }
         injectDependencies()
-        val viewModel: HistoryViewModel by viewModel()
+        val viewModel: HistoryViewModel by currentScope.inject()
         model = viewModel
         model.subscribe().observe(this@HistoryActivity, Observer<AppState> {
             renderData(it)

@@ -2,13 +2,16 @@ package ru.andreysozonov.dictionary.di
 
 import RepositoryImplementationLocal
 import androidx.room.Room
+import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ru.andreysozonov.repository.datasource.RetrofitImplementation
 import ru.andreysozonov.repository.datasource.RoomDataBaseImplementation
 import ru.andreysozonov.dictionary.model.repository.Repository
 import ru.andreysozonov.dictionary.model.repository.RepositoryImplementation
 import ru.andreysozonov.dictionary.model.repository.RepositoryLocal
+import ru.andreysozonov.dictionary.view.main.MainActivity
 import ru.andreysozonov.repository.room.HistoryDataBase
 import ru.andreysozonov.dictionary.view.main.MainInteractor
 import ru.andreysozonov.dictionary.view.main.MainViewModel
@@ -33,8 +36,10 @@ val application = module {
 }
 
 val mainScreen = module {
-    factory { MainViewModel(get()) }
-    factory { MainInteractor(get(), get()) }
+    scope(named<MainActivity>()) {
+        viewModel { MainViewModel(get()) }
+        scoped { MainInteractor(get(), get()) }
+    }
 
 }
 
