@@ -1,7 +1,9 @@
 package ru.andreysozonov.dictionary.view.main
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
@@ -125,8 +127,10 @@ class MainActivity :
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_history, menu)
-        return true
+        menuInflater.inflate(R.menu.menu_main, menu)
+
+        menu?.findItem(R.id.button_menu_settings)?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -151,6 +155,11 @@ class MainActivity :
                         ).show()
                     }
 
+                true
+            }
+            R.id.button_menu_settings -> {
+                val intent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                startActivityForResult(intent, 42)
                 true
             }
             else -> super.onOptionsItemSelected(item)

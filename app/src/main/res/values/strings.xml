@@ -8,6 +8,7 @@
     <string name="search_hint">New word</string>
     <string name="delete_description">X</string>
     <string name="menu_history">History</string>
+    <string name="menu_settings">Settings</string>
     <string name="image_stub">image</string>
     <string name="dialog_button_cancel">Cancel</string>
     <string name="dialog_title_stub">Undefined error</string>

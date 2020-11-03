@@ -9,7 +9,8 @@
         android:id="@+id/working_frame_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity = "center">
+        android:gravity = "center"
+        android:background="@color/color_background">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_activity_recyclerview"

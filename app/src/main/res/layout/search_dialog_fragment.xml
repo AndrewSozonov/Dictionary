@@ -6,7 +6,8 @@
     android:layout_height="205dp"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:layout_marginBottom="@dimen/margin_medium">
+    android:layout_marginBottom="@dimen/margin_medium"
+    android:background="@color/color_background_dialog">
 
     <TextView
         android:id="@+id/search_button_textview"

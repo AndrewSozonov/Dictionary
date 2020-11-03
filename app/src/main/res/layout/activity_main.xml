@@ -21,7 +21,8 @@
             android:id="@+id/success_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@color/color_background">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/main_activity_recyclerview"
@@ -42,6 +43,7 @@
             android:id="@+id/loading_frame_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/color_background"
             android:visibility="gone">
 
             <ProgressBar
@@ -64,7 +66,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:background="@color/color_background">
 
             <TextView
                 android:id="@+id/error_textview"

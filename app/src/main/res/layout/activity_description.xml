@@ -6,18 +6,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/description_screen_swipe_refresh_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingEnd="@dimen/margin_xx_small"
-    android:paddingLeft="@dimen/margin_xx_small"
-    android:paddingRight="@dimen/margin_xx_small"
-    android:paddingStart="@dimen/margin_xx_small">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="@dimen/margin_medium"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:background="@color/color_background">
 
         <TextView
             android:id="@+id/description_header"
