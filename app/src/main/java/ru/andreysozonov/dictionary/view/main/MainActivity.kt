@@ -9,16 +9,19 @@ import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
 import ru.andreysozonov.dictionary.R
 import ru.andreysozonov.dictionary.di.injectDependencies
 import ru.andreysozonov.dictionary.view.description.DescriptionActivity
 import ru.andreysozonov.dictionary.view.main.adapter.MainAdapter
 import ru.andreysozonov.utils.utils.convertMeaningsToString
+import ru.andreysozonov.utils.utils.viewById
 
 private const val HISTORY_ACTIVITY_PATH =
     "ru.andreysozonov.historyscreen.view.history.HistoryActivity"
@@ -34,7 +37,8 @@ class MainActivity :
     private val observer = Observer<ru.andreysozonov.model.data.data.AppState> {
         renderData(it)
     }
-
+    private val mainActivityRecyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
     private var adapter: MainAdapter? = null
 
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
@@ -64,13 +68,13 @@ class MainActivity :
 
 
 
-        search_fab.setOnClickListener {
+        searchFAB.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
 
-                    model.getData(searchWord, true).observe(this@MainActivity, observer)
+                    model.getData(searchWord, isNetworkAvailable).observe(this@MainActivity, observer)
                 }
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
@@ -79,11 +83,12 @@ class MainActivity :
 
     private fun initViewModel() {
         injectDependencies()
-        val viewModel: MainViewModel by viewModel()
+        val viewModel: MainViewModel by currentScope.inject()
         model = viewModel
     }
 
     override fun renderData(appstate: ru.andreysozonov.model.data.data.AppState) {
+
         when (appstate) {
             is ru.andreysozonov.model.data.data.AppState.Success -> {
                 val dataModel = appstate.data
@@ -92,9 +97,9 @@ class MainActivity :
                 } else {
                     showViewSuccess()
                     if (adapter == null) {
-                        main_activity_recyclerview.layoutManager =
+                        mainActivityRecyclerView.layoutManager =
                             LinearLayoutManager(applicationContext)
-                        main_activity_recyclerview.adapter =
+                        mainActivityRecyclerView.adapter =
                             MainAdapter(onListItemClickListener, dataModel)
                     } else {
                         adapter!!.setData(dataModel)

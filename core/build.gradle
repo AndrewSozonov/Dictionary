@@ -28,6 +28,7 @@ android {
 dependencies {
 
     implementation project(Modules.model)
+
     //Design
     implementation Design.appcompat
     implementation Design.material
